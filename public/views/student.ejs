@@ -1,0 +1,57 @@
+<!-- views/student.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="light-theme">
+  <header>
+    <img src="<%= student && student.profilePic ? student.profilePic : '/images/default-profile.png' %>" alt="Profile Pic" class="profile-pic">
+    <h2><%= student ? student.fullName : "Student" %></h2>
+  </header>
+  
+  <section>
+    <h3>Update Profile</h3>
+    <form action="/student/update" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="id" value="<%= student ? student._id : '' %>">
+      <label>Full Name:</label>
+      <input type="text" name="fullName" value="<%= student ? student.fullName : '' %>" required>
+      <!-- Additional fields for dob, sex, address, email, etc. -->
+      <label>Profile Picture:</label>
+      <input type="file" name="profilePic">
+      <button type="submit">Update</button>
+    </form>
+  </section>
+  
+  <section>
+    <h3>Subjects & Report Card</h3>
+    <ul>
+      <% if (student && student.subjects) { student.subjects.forEach(function(subject) { %>
+        <li>
+          <strong><%= subject.name %></strong>: <%= subject.mark %> (Grade: <%= subject.grade %>)
+          <form action="/student/subjects/delete" method="POST" style="display:inline;">
+            <input type="hidden" name="id" value="<%= student._id %>">
+            <input type="hidden" name="subjectName" value="<%= subject.name %>">
+            <button type="submit">Delete</button>
+          </form>
+        </li>
+      <% }) } %>
+    </ul>
+    <form action="/student/subjects/add" method="POST">
+      <input type="hidden" name="id" value="<%= student ? student._id : '' %>">
+      <label>Subject Name:</label>
+      <input type="text" name="subjectName" required>
+      <label>Mark:</label>
+      <input type="number" name="mark" required>
+      <button type="submit">Add Subject</button>
+    </form>
+  </section>
+  
+  <footer>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+  </footer>
+  <script src="/js/themeToggle.js"></script>
+</body>
+</html>
